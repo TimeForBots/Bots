@@ -13,9 +13,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Author 		: Patrick Pedersen <ctx.xda@gmail.com>
-# Last updated  : 18:30 3/3/2017 CEST
+# Last updated 		: 17:54 3/4/2017 CEST
 # Descriptiption	: Bot configuration parser/reader
 
+import os
+import re
 import telegram
 from array import array
 
@@ -23,11 +25,15 @@ def validVarChar(char) :
 	return (char.isalpha() or char == '_')
 
 class botcfg:
+	path = None
 	token = None
+	bootmsg = None
+	bootmsgChats = []
 	methods = []
 	methodPackages = [] 
 
 	def __init__(self, configPath) :
+		self.path = configPath
 		with open(configPath, 'r') as config :
 			configBuffer = config.read() 
 	
@@ -57,6 +63,16 @@ class botcfg:
 
 					if _var == "BOT_TOKEN" :
 						self.token = _def.strip()
+
+					elif _var == "BOOT_MSG" :
+						try:
+							self.bootmsg = re.findall(r'"([^"]*)"', _def)[0]
+						except IndexError:
+							raise Exception(os.path.basename(self.path) + ": Quotation marks missin on BOOT_MSG definition")
+
+					elif _var == "BOOT_MSG_CHATS" :
+						for chat_id in _def.split() :
+							self.bootmsgChats.append(chat_id)
 
 					elif _var == "SUPPORTED_METHODS" :
 						for method in _def.split() :
