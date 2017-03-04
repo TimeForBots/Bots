@@ -58,10 +58,6 @@ class botcfg:
 					if _var == "BOT_TOKEN" :
 						self.token = _def.strip()
 				
-					if _var == "SUPPORTED_METHOD_PACKAGES" :
-						for methodPackage in _def.split() :
-							self.methodPackages.append(methodPackage)
-
 					if _var == "SUPPORTED_METHODS" :
 						for method in _def.split() :
 							self.methods.append(method)
