@@ -1,4 +1,3 @@
-
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -30,8 +29,8 @@ class botcfg:
 	bootmsg = None
 	bootmsgChats = []
 	methods = []
-	methodPackages = []
 
+	# Deprecated and will be replaced with configparser module
 	def __init__(self, configPath) :
 		self.path = configPath
 		with open(configPath, 'r') as config :
