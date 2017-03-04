@@ -23,7 +23,7 @@ def validVarChar(char) :
 	return (char.isalpha() or char == '_')
 
 class botcfg:
-	token = 'TOKEN'
+	token = None
 	methods = []
 	methodPackages = [] 
 
