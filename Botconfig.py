@@ -18,6 +18,7 @@
 import os
 import re
 import telegram
+import configparser
 from array import array
 
 def validVarChar(char) :
@@ -33,56 +34,20 @@ class botcfg:
 	# Deprecated and will be replaced with configparser module
 	def __init__(self, configPath) :
 		self.path = configPath
-		with open(configPath, 'r') as config :
-			configBuffer = config.read()
 
-			i      = 0 # Char iterator
+		cfg = configparser.ConfigParser()
+		cfg.read(configPath)
 
-			while i < len(configBuffer) and i != -1 :
+		if cfg.has_option('META', 'TOKEN') :
+			self.token = cfg['META']['TOKEN']
+		else :
+			raise Exception(configPath + ": No token defined in bot configuration")
 
-				toggle = 0 # Toggles between abc/non-abc chars and varname start/end elements
-				varnamePosition = [None] * 2
+		self.bootmsg      = cfg['BOOT']['BOOT_MSG']               if cfg.has_option('BOOT', 'BOOT_MSG')       else None
+		self.bootmsgChats = cfg['BOOT']['BOOT_MSG_CHATS'].split() if cfg.has_option('BOOT', 'BOOT_MSG_CHATS') else None
 
-				# I'm having a hard time explaining this part to others
-				# TODO: Replace with for
-				while True :
-
-					while i < len(configBuffer) and configBuffer[i] != '#' and configBuffer[i] != '=' and validVarChar(configBuffer[i]) == toggle :
-						i += 1
-
-					if i >= len(configBuffer) or configBuffer[i] == '=' :
-						break
-
-					if configBuffer[i] == '#' :
-						i = configBuffer.find("\n", i)
-
-
-					varnamePosition[toggle] = i
-					toggle = not toggle
-
-				# Get Var name
-				_var = configBuffer[varnamePosition[0]:varnamePosition[1]]
-				_def = configBuffer[i + 1:configBuffer.find(';', i)]
-
-				if _var == "BOT_TOKEN" :
-					self.token = _def.strip()
-
-				elif _var == "BOOT_MSG" :
-					try:
-						self.bootmsg = re.findall(r'"([^"]*)"', _def)[0]
-					except IndexError:
-						raise Exception(os.path.basename(self.path) + ": Quotation marks missing on BOOT_MSG definition")
-
-				elif _var == "BOOT_MSG_CHATS" :
-					for chat_id in _def.split() :
-						self.bootmsgChats.append(chat_id)
-
-				elif _var == "SUPPORTED_METHODS" :
-					for method in _def.split() :
-						self.methods.append(method)
-
-				i = configBuffer.find(';', i)
-
+		self.methods = cfg['METHODS']['SUPPORTED_METHODS'].split() if cfg.has_option('METHODS', 'SUPPORTED_METHODS') else None
+	
 	def includesMethod(self, method_name) :
 		return method_name in self.methods
 
