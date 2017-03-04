@@ -68,7 +68,7 @@ class botcfg:
 						try:
 							self.bootmsg = re.findall(r'"([^"]*)"', _def)[0]
 						except IndexError:
-							raise Exception(os.path.basename(self.path) + ": Quotation marks missin on BOOT_MSG definition")
+							raise Exception(os.path.basename(self.path) + ": Quotation marks missing on BOOT_MSG definition")
 
 					elif _var == "BOOT_MSG_CHATS" :
 						for chat_id in _def.split() :
