@@ -19,7 +19,8 @@ import os
 import re
 import telegram
 import configparser
-from array import array
+
+from AudioConfig import audiocfg
 
 def validVarChar(char) :
 	return (char.isalpha() or char == '_')
@@ -28,6 +29,8 @@ class botcfg:
 	path = None
 	token = None
 	bootmsg = None
+	audioconfig = None
+	masters = []
 	bootmsgChats = []
 	methods = []
 
@@ -42,9 +45,13 @@ class botcfg:
 			self.token = cfg['META']['TOKEN']
 		else :
 			raise Exception(configPath + ": No token defined in bot configuration")
-
+		
+		self.masters = [int(user_id) for user_id in (cfg['USERS']['MASTERS'].split() if cfg.has_option('USERS', 'MASTERS') else None)]
+		
 		self.bootmsg      = cfg['BOOT']['BOOT_MSG']               if cfg.has_option('BOOT', 'BOOT_MSG')       else None
 		self.bootmsgChats = cfg['BOOT']['BOOT_MSG_CHATS'].split() if cfg.has_option('BOOT', 'BOOT_MSG_CHATS') else None
+
+		self.audioconfig = audiocfg(cfg['MEDIA']['AUDIO_SECTIONS'].split()) if cfg.has_option('MEDIA', 'AUDIO_SECTIONS') else None
 
 		self.methods = cfg['METHODS']['SUPPORTED_METHODS'].split() if cfg.has_option('METHODS', 'SUPPORTED_METHODS') else None
 	
