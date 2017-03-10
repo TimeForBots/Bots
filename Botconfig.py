@@ -11,8 +11,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Author 		: Patrick Pedersen <ctx.xda@gmail.com>
-# Last updated 		: 17:54 3/4/2017 CEST
+# Author 			: Patrick Pedersen <ctx.xda@gmail.com>
+# Last updated 		: 14:00 8/4/2017 CEST
 # Descriptiption	: Bot configuration parser/reader
 
 import os
@@ -27,6 +27,7 @@ def validVarChar(char) :
 
 class botcfg:
 	path = None
+	execPath = None
 	token = None
 	bootmsg = None
 	audioconfig = None
@@ -46,6 +47,7 @@ class botcfg:
 		else :
 			raise Exception(configPath + ": No token defined in bot configuration")
 		
+		self.execPath = cfg['META']['EXEC_PATH'] if cfg.has_option('META', 'EXEC_PATH') else None
 		self.masters = [int(user_id) for user_id in (cfg['USERS']['MASTERS'].split() if cfg.has_option('USERS', 'MASTERS') else None)]
 		
 		self.bootmsg      = cfg['BOOT']['BOOT_MSG']               if cfg.has_option('BOOT', 'BOOT_MSG')       else None
