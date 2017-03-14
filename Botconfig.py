@@ -20,7 +20,9 @@ import re
 import telegram
 import configparser
 
+from re import findall
 from AudioConfig import audiocfg
+from Binder import bind
 
 def validVarChar(char) :
 	return (char.isalpha() or char == '_')
@@ -34,6 +36,7 @@ class botcfg:
 	masters = []
 	bootmsgChats = []
 	methods = []
+	binds = []
 
 	# Deprecated and will be replaced with configparser module
 	def __init__(self, configPath) :
@@ -55,7 +58,11 @@ class botcfg:
 
 		self.audioconfig = audiocfg(cfg['MEDIA']['AUDIO_SECTIONS'].split()) if cfg.has_option('MEDIA', 'AUDIO_SECTIONS') else None
 
-		self.methods = cfg['METHODS']['SUPPORTED_METHODS'].split() if cfg.has_option('METHODS', 'SUPPORTED_METHODS') else None
+		self.methods = cfg['COMMANDS']['SUPPORTED_METHODS'].split() if cfg.has_option('COMMANDS', 'SUPPORTED_METHODS') else None
+
+		if cfg.has_option('COMMANDS', 'PERMA_BINDS') :
+			for binds in findall('".+?"', cfg['COMMANDS']['PERMA_BINDS']) :
+				self.binds.append(bind(binds[2:binds.find('/', 2)].strip(), binds[binds.find('/', 2) + 1:-1].strip()))
 	
 	def includesMethod(self, method_name) :
 		return method_name in self.methods
